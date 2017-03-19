@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "65588809-c1d5-4b38-8fe6-2a0aa73ac6af++4032",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "65588809-c1d5-4b38-8fe6-2a0aa73ac6af++4032" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "65588809-c1d5-4b38-8fe6-2a0aa73ac6af++4032" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "645C80A2-4270-49BC-91E2-84AC62DC9E03",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "65588809-c1d5-4b38-8fe6-2a0aa73ac6af++4032" : "siba_a\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "snake",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "snake\/snake.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/rendu-svn.etna-alternance.net\/v2\/2017_Master%20-%20Octobre_IDV-DCPP_7_0-1641",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "65588809-c1d5-4b38-8fe6-2a0aa73ac6af++4032"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+Gestion de la food :
+
+Afficher à manger à intervalle regulier jusqu'un certain nombre de food mangé et accelerer progressivement l'interval :
+
+- Tant que < 5 food : afficher 1 food si 1 food mangé
+
+- Tant que < 10 food : affiche 1 food toutes les 10/15 secondes + le faire avancé plus vite
+
+- Tant que > 20 food : affiche 1 food toutes les 7/10
+
+-------------> FAIT
+
+Bonus :
+
+- Aller plus/moins vite pendant quelques secondes
+
+- Enlever du corp du snake si > 10/20 ( 3 snakes en moins ) : Bonus
+- Ajouter du corp du snake ( 2/3 snakes en plus ) : Malus
+
+------------------------------> FAIT
+
+Coté php :
+
+- Partager score sur facebook
+- Statistiques de jeu ( nbre partie joué, meilleur partie, meilleur temps de jeu )
+- Ranking
+- Defis/Paris ( paarier des coins sur ma prochaine partie en defiant le score d'un autre joueur, qui aurait un score egale ou supperieur au miens. Si je gagne, j'obtient 500 coins, au bout de 2000 coins je peux choisir une couleur a mon snake, au bout de 4000 coins je peux choisir la couleur du cube, les couleurs sont acheté. )
+
+------------------------------
+
+- Cosmétique score et bonus
+- Systeme start + selecteur taille de la map
+
+------------------------------> FAIT
+
+- User : sign in + login + log out + 
+
+------------------------------> FAIT
+
+- scoring  + inserer un int / arrondir a l'entier supperieur apres la division
+

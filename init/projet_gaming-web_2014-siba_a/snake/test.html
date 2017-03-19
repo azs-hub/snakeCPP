@@ -1,0 +1,262 @@
+<html>
+<head>
+	<title>SNAKE</title>
+	<script type="text/javascript" src="js/Three.js"></script>
+	<script type="text/javascript" src="js/jquery1.10.js"></script>
+</head>
+<body>
+
+	<script defer="defer">
+	$(document).ready(function(){
+	      var lastTime = angleY = sec = sizeCube = sizeSnake = 0;
+	      var queue = new Array(); 
+	      var direction = new Array();
+	      var array_snakes = new Array();
+	      var odd = tmpKeyCode = true;
+	      var cube, snake, currentFace, currentKey;
+	      var MoveInstructions={};
+	      var game = false;
+	      var camera, directionalLight, ambientLight;
+
+	      // renderer
+	      var renderer = new THREE.WebGLRenderer();
+	      renderer.setSize(window.innerWidth-50, window.innerHeight-50);
+	      document.body.appendChild(renderer.domElement);
+
+	      // scene
+	      var scene = new THREE.Scene();
+	                
+	      // init cube and snake
+	      function init(size_cube, size_snake){
+
+		      	// camera
+		    camera = new THREE.PerspectiveCamera(75, (window.innerWidth-50) / (window.innerHeight-50), 1, 1000);
+
+		    directionalLight = new THREE.DirectionalLight(0xffffff);
+		    directionalLight.position.set(0, 0, 500).normalize();
+
+		    t_cube=sizeCube=( size_cube < size_snake ) ? size_cube*size_snake : size_cube/size_snake;
+		    sizeSnake=size_snake;
+
+		    cube = new THREE.Mesh( new THREE.CubeGeometry(t_cube, t_cube, t_cube), new THREE.MeshLambertMaterial({
+		        color: 'blue' 
+		      }) );
+		    
+			for ( i=0; i<=4; i++ ){
+				array_snakes.push(new THREE.Mesh( new THREE.CubeGeometry(size_snake, size_snake, size_snake), new THREE.MeshLambertMaterial({ color: 'red'  }) )	);
+			}
+			
+		 	var val_x = 0;
+		 	for ( i in array_snakes ){
+
+		 		scene.add(array_snakes[i]);
+
+		 		array_snakes[i].position.z = t_cube/2+size_snake/2;
+			    array_snakes[i].position.y = 0;
+			    array_snakes[i].position.x = val_x;
+			    val_x +=size_snake;
+		 	}
+
+		 	scene.add(cube);
+
+		    camera.position.x = 0;
+		    camera.position.y = 0;
+		    camera.position.z = 500;
+
+		      // add subtle blue ambient lighting
+		    ambientLight = new THREE.AmbientLight(0x000044);
+		    scene.add(ambientLight);
+
+		    scene.add(directionalLight);
+		    // set direction snake
+		    currentFace = "Front";
+		    currentKey = 37;
+
+		    // game = true;
+
+		    animate();
+	      }
+	      init(7, 50);
+
+	      MoveInstructions["Front"]=[];
+	      MoveInstructions["Front"][37] = { x:-1 ,y:0, z:0, cameraRotation: "Left",  dimensionToCheck:"x", directionToCheck:-1};
+	      MoveInstructions["Front"][38] = { x:0, y:1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:1};
+	      MoveInstructions["Front"][39] = { x:1, y:0, z:0, cameraRotation: "Right", dimensionToCheck:"x", directionToCheck:1};
+	      MoveInstructions["Front"][40] = { x:0, y:-1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:-1};
+
+	      MoveInstructions["Left"]=[];
+	      MoveInstructions["Left"][37] = { x:0, y:0, z:-1, cameraRotation: "Left", dimensionToCheck:"z", directionToCheck:-1};
+	      MoveInstructions["Left"][38] = { x:0, y:1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:1};
+	      MoveInstructions["Left"][39] = { x:0, y:0, z:1, cameraRotation: "Right", dimensionToCheck:"z", directionToCheck:1};
+	      MoveInstructions["Left"][40] = { x:0, y:-1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:-1};
+
+	      MoveInstructions["Back"]=[];
+	      MoveInstructions["Back"][37] = { x:1 ,y:0, z:0, cameraRotation: "Left", dimensionToCheck:"x", directionToCheck:1};
+	      MoveInstructions["Back"][38] = { x:0, y:1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:1};
+	      MoveInstructions["Back"][39] = { x:-1, y:0, z:0, cameraRotation: "Right", dimensionToCheck:"x", directionToCheck:-1};
+	      MoveInstructions["Back"][40] = { x:0, y:-1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:-1};
+
+	      MoveInstructions["Right"]=[];
+	      MoveInstructions["Right"][37] = { x:0, y:0, z:1, cameraRotation: "Left", dimensionToCheck:"z", directionToCheck:1};
+	      MoveInstructions["Right"][38] = { x:0, y:1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:1};
+	      MoveInstructions["Right"][39] = { x:0, y:0, z:-1, cameraRotation: "Right", dimensionToCheck:"z", directionToCheck:-1};
+	      MoveInstructions["Right"][40] = { x:0, y:-1, z:0, cameraRotation: "Died", dimensionToCheck:"y", directionToCheck:-1};
+
+	      // MoveInstructions["Bottom"]=[];
+	      // MoveInstructions["Bottom"][37] = { x:1 ,y:0, z:0, cameraRotation: "Left", dimensionToCheck:"x", directionToCheck:1};
+	      // MoveInstructions["Bottom"][38] = { x:0, y:0, z:-1, cameraRotation: "Top", dimensionToCheck:"z", directionToCheck:-1};
+	      // MoveInstructions["Bottom"][39] = { x:-1, y:0, z:0, cameraRotation: "Right", dimensionToCheck:"x", directionToCheck:-1};
+	      // MoveInstructions["Bottom"][40] = { x:0, y:0, z:1, cameraRotation: "Bottom", dimensionToCheck:"z", directionToCheck:1};
+
+	      // MoveInstructions["Top"]=[];
+	      // MoveInstructions["Top"][37] = { x:-1 ,y:0, z:0, cameraRotation: "Left", dimensionToCheck:"x", directionToCheck:-1};
+	      // MoveInstructions["Top"][38] = { x:0, y:0, z:-1, cameraRotation: "Top", dimensionToCheck:"z", directionToCheck:-1};
+	      // MoveInstructions["Top"][39] = { x:1, y:0, z:0, cameraRotation: "Right", dimensionToCheck:"x", directionToCheck:1};
+	      // MoveInstructions["Top"][40] = { x:0, y:0, z:1, cameraRotation: "Bottom", dimensionToCheck:"z", directionToCheck:1};
+
+	      function animate(){
+	      	// update
+	      	// console.log( queue.length );
+	      	if ( queue.length > 0 && odd == true ){
+
+	      		var ex = queue.shift();
+	        	ex();
+	      	}
+
+	      	// gestion du mouvement du snake
+	      	sec++;
+	      	if ( sec == 30 ){
+
+	      		var multiplicateur = MoveInstructions[currentFace][currentKey].directionToCheck;
+
+	      		var dimension = array_snakes[0].position[MoveInstructions[currentFace][currentKey].dimensionToCheck];
+
+				var limit= (Math.floor((sizeCube/sizeSnake)/2)*sizeSnake)+sizeSnake;
+
+	      		if (  ( multiplicateur == -1 && dimension-sizeSnake >= -1*limit ) ||  
+	      			(  multiplicateur == 1 && dimension+sizeSnake <= limit ) ){
+
+	      			tmpKeyCode = true;
+	      			if (  ( multiplicateur == -1 && dimension-sizeSnake > -1*limit ) ||  
+	      			(  multiplicateur == 1 && dimension+sizeSnake < limit ) ){
+	      				
+	      				tmpKeyCode = false;
+	      			}
+	      			console.log(tmpKeyCode);
+	      			snk = array_snakes[ array_snakes.length-1 ];
+
+
+	      			snk.position.x=array_snakes[0].position.x+sizeSnake*MoveInstructions[currentFace][currentKey].x;
+	      			snk.position.y=array_snakes[0].position.y+sizeSnake*MoveInstructions[currentFace][currentKey].y;
+	      			snk.position.z=array_snakes[0].position.z+sizeSnake*MoveInstructions[currentFace][currentKey].z;
+
+	      			array_snakes.unshift( array_snakes.pop() );
+
+		      	}else {
+
+		      		if ( MoveInstructions[currentFace][currentKey].cameraRotation == "Died" ){
+		      			game = false;
+		      			scene.remove( snake );
+		      			scene.remove( cube );
+		      			scene.remove( camera );
+		      			scene.remove( directionalLight );
+		      			scene.remove( ambientLight );
+		      			sec = 0;
+		      			return init(7, 50);
+		      		}
+		      		else
+		      			GenerateCubeFaceView(camera, directionalLight, MoveInstructions[currentFace][currentKey].cameraRotation, 0.5);
+		      	}
+		      	sec = 0;
+	      	}
+
+	      	odd = ( odd === true ) ? false : true;
+	        // render
+	        renderer.render(scene, camera);
+
+	        requestAnimationFrame(function(){
+	            animate();
+	        });
+	      }
+
+	      function GenerateCubeFaceView( camera, directionalLight, cameraRotation, animationSpeed ){
+
+	      	var step = animationSpeed*30;
+	      	var angle = (90*Math.PI/180)/step;
+	      	var angleY = angleX = 0;
+
+	      	var getNextFace={};
+	      	getNextFace["Front"] = {Left:"Left", Top:"Top", Right:"Right", Bottom:"Bottom"};
+	      	getNextFace["Right"] = {Left:"Front", Top:"Top", Right:"Back", Bottom:"Bottom"};
+	      	getNextFace["Back"] = {Left:"Right", Top:"Top", Right:"Left", Bottom:"Bottom"};
+	      	getNextFace["Left"] = {Left:"Back", Top:"Top", Right:"Front", Bottom:"Bottom"};
+	      	getNextFace["Top"] = {Left:"Left", Top:"Back", Right:"Right", Bottom:"Front"};
+	      	getNextFace["Bottom"] = {Left:"Right", Top:"Back", Right:"Left", Bottom:"Front"};
+
+	      	currentFace = getNextFace[currentFace][cameraRotation];
+
+	      	switch (cameraRotation){
+
+
+				case "Left":
+					angleX = -angle;
+				break;
+				case "Right":
+					angleX = angle;
+				break;
+
+			}
+
+			for ( i=0; i<step; i++ ){
+				queue.push( (generateStep( camera, directionalLight, angleY, angleX, 500 ) ) );
+			}
+
+	      }
+
+	      function generateStep( camera, directionalLight, angleX, angleY, distanceCenter ){
+
+	      	return function(){
+
+		      	camera.position.x = 0;
+		      	camera.position.y = 0;
+		      	camera.position.z = 0;
+
+		      	directionalLight.position.x = 0;
+		      	directionalLight.position.y = 0;
+		      	directionalLight.position.z = 0;
+
+		      	if ( (camera.rotation.x+angleX) > Math.PI*2 ){
+
+		      		camera.rotation.x = 0;
+		      		directionalLight.rotation.x = 0;
+		      	}else{
+
+		      		camera.rotateX(angleX);
+		      		directionalLight.rotateX(angleX);
+		      	}
+		      		
+		      	
+		      	if ( (camera.rotation.y+angleY) > Math.PI*2 ){
+
+		      		camera.rotation.y = 0;
+		      		directionalLight.rotation.y = 0;
+		      	}else{
+
+		      		camera.rotateY(angleY);
+		      		directionalLight.rotateY(angleY);
+		      	}
+		      	camera.translateZ( distanceCenter );
+		      	directionalLight.translateZ( distanceCenter );
+	      	}
+	      }
+
+	      // var claviercode = { 37:"left", 38:"top", 39:"right", 40:"bottom" };
+
+	      $(document).keydown(function(e){
+	      		if ( tmpKeyCode == false )
+					currentKey = e.keyCode;
+	      });
+	});
+</script>
+</body>
+</html>
